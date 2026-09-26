@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  body { @apply font-sans bg-[#faf8f5] text-gray-900; }
+}
+
+@layer components {
+  .btn-primary { @apply bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors; }
+  .btn-secondary { @apply bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-semibold border border-gray-200 hover:bg-gray-200 transition-colors; }
+}
+
+
+/* Toast */
+.toast { @apply fixed bottom-4 right-4 left-4 sm:left-auto sm:right-8 sm:bottom-8 bg-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg transform translate-y-24 opacity-0 transition-all duration-300 z-[999] text-center sm:text-left; }
+.toast.show { @apply translate-y-0 opacity-100; }
+
+/* Modal */
+.modal-overlay { @apply fixed inset-0 bg-black/60 z-[300] hidden items-center justify-center p-0 md:p-5; }
+.modal-overlay.open { @apply flex; }
