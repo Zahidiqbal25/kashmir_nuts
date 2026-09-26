@@ -164,9 +164,10 @@ export default function AdminClient() {
 
   async function addCategory(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const fd = new FormData(e.currentTarget)
+    const form = e.currentTarget
+    const fd = new FormData(form)
     await fetch('/api/categories', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: fd.get('name'), emoji: fd.get('emoji') }) })
-    e.currentTarget.reset(); loadAll()
+    form.reset(); loadAll()
   }
 
   async function deleteCategory(id: number) {

@@ -4,7 +4,7 @@ import type { MetadataRoute } from 'next'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: products } = await supabase.from('products').select('id, name')
 
-  const productUrls = (products || []).map(p => ({
+  const productUrls = (products || []).map((p: any) => ({
     url: `https://www.valenuts.com/products/${p.id}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
