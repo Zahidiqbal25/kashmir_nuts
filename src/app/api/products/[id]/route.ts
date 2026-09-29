@@ -17,14 +17,15 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const { name, category, price, originalPrice, weight, description, rating, inStock, image, quantity, images, features } = body
     const qty = quantity !== undefined ? Number(quantity) : existing.quantity
 
+    const galleryImages = Array.isArray(images) ? images : (existing.images || [])
     const updateData: any = {
       name: name || existing.name,
       category: category || existing.category,
       price: Number(price) || existing.price,
       originalPrice: Number(originalPrice) || existing.originalPrice,
       weight: weight || existing.weight,
-      image: image !== undefined ? image : existing.image,
-      images: images !== undefined ? images : (existing.images || []),
+      image: image !== undefined ? image || galleryImages[0] || '' : existing.image || galleryImages[0] || '',
+      images: galleryImages,
       description: description !== undefined ? description : existing.description,
       rating: Number(rating) || existing.rating,
       inStock: qty > 0,

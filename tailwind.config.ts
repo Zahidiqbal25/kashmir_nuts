@@ -5,7 +5,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: { DEFAULT: '#2d5016', light: '#4a7c28', dark: '#1a3009' },
+        primary: { DEFAULT: '#5b2333', light: '#7d3a4c', dark: '#3b1421' },
         accent: { DEFAULT: '#d4a843', light: '#f0d68a' },
       },
       fontFamily: {

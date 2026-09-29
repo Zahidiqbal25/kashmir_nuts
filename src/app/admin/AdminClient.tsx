@@ -97,10 +97,14 @@ export default function AdminClient() {
     setUploading(true)
     const fd = new FormData()
     fd.append('file', file)
-    const res = await fetch('/api/upload', { method: 'POST', body: fd })
-    const data = await res.json()
-    setUploading(false)
-    return data.url || ''
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok || !data.url) throw new Error(data.error || 'Image upload failed')
+      return data.url
+    } finally {
+      setUploading(false)
+    }
   }
 
   async function saveProduct(e: React.FormEvent<HTMLFormElement>) {
@@ -109,8 +113,11 @@ export default function AdminClient() {
     const fileInput = (e.currentTarget.querySelector('#mainImage') as HTMLInputElement)
     let image = imagePreview || editProduct?.image || ''
 
-    if (fileInput?.files?.[0]) {
-      image = await uploadImage(fileInput.files[0])
+    try {
+      if (fileInput?.files?.[0]) image = await uploadImage(fileInput.files[0])
+    } catch (err: any) {
+      alert(err.message || 'Image upload failed. The product was not saved.')
+      return
     }
 
     const images = productImages.length > 0 ? productImages : (editProduct?.images || [])
@@ -216,14 +223,14 @@ export default function AdminClient() {
     if (!win) return
     win.document.write(`<!DOCTYPE html><html><head><title>Invoice #${o.id}</title><style>
       body{font-family:Arial,sans-serif;padding:40px;color:#222;max-width:700px;margin:0 auto}
-      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2d5016;padding-bottom:16px;margin-bottom:24px}
-      .brand{font-size:22px;font-weight:800;color:#2d5016}  .brand span{color:#d4a843}
-      .badge{background:#2d5016;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px}
-      h3{color:#2d5016;margin:20px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:1px}
+      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #5b2333;padding-bottom:16px;margin-bottom:24px}
+      .brand{font-size:22px;font-weight:800;color:#5b2333}  .brand span{color:#d4a843}
+      .badge{background:#5b2333;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px}
+      h3{color:#5b2333;margin:20px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:1px}
       table{width:100%;border-collapse:collapse;margin-top:8px}
       th{background:#f5f5f5;padding:8px 10px;text-align:left;font-size:12px;text-transform:uppercase;color:#666}
       td{padding:8px 10px;border-bottom:1px solid #eee;font-size:13px}
-      .total-row td{font-weight:700;font-size:15px;border-top:2px solid #2d5016;border-bottom:none}
+      .total-row td{font-weight:700;font-size:15px;border-top:2px solid #5b2333;border-bottom:none}
       .footer{margin-top:32px;text-align:center;font-size:11px;color:#999;border-top:1px solid #eee;padding-top:16px}
       @media print{body{padding:20px}}
     </style></head><body>
@@ -241,7 +248,7 @@ export default function AdminClient() {
       </tbody><tfoot>
         <tr><td colspan="4" style="text-align:right;font-size:12px;color:#666;padding:6px 10px">Subtotal</td><td style="padding:6px 10px">₹${subtotal.toLocaleString()}</td></tr>
         <tr><td colspan="4" style="text-align:right;font-size:12px;color:#666;padding:6px 10px">Shipping</td><td style="padding:6px 10px">${shipping === 0 ? 'FREE' : '₹' + shipping}</td></tr>
-        <tr class="total-row"><td colspan="4" style="text-align:right;padding:10px">Total</td><td style="padding:10px;color:#2d5016">₹${o.total?.toLocaleString()}</td></tr>
+        <tr class="total-row"><td colspan="4" style="text-align:right;padding:10px">Total</td><td style="padding:10px;color:#5b2333">₹${o.total?.toLocaleString()}</td></tr>
       </tfoot></table>
       <div style="margin-top:16px;font-size:12px"><strong>Payment:</strong> ${o.payment} &nbsp;|&nbsp; <strong>Status:</strong> ${o.status || 'Pending'}</div>
       <div class="footer">Thank you for shopping with Valenuts! 🌰 &nbsp;|&nbsp; For support contact us at ${contact.email || ''}</div>
@@ -257,12 +264,12 @@ export default function AdminClient() {
     win.document.write(`<!DOCTYPE html><html><head><title>Label #${o.id}</title><style>
       body{font-family:Arial,sans-serif;padding:0;margin:0}
       .label{width:380px;border:2px dashed #333;padding:20px;margin:20px auto;position:relative}
-      .brand{font-size:16px;font-weight:800;color:#2d5016;border-bottom:1px solid #ccc;padding-bottom:8px;margin-bottom:12px}
+      .brand{font-size:16px;font-weight:800;color:#5b2333;border-bottom:1px solid #ccc;padding-bottom:8px;margin-bottom:12px}
       .brand span{color:#d4a843}
       .section{margin-bottom:10px}
       .section label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#999;display:block;margin-bottom:2px}
       .section p{font-size:13px;font-weight:600;margin:0;line-height:1.5}
-      .order-id{position:absolute;top:20px;right:20px;background:#2d5016;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700}
+      .order-id{position:absolute;top:20px;right:20px;background:#5b2333;color:#fff;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700}
       .divider{border:none;border-top:1px dashed #ccc;margin:10px 0}
       .from{font-size:11px;color:#666;margin-top:10px}
       @media print{body{margin:0}.label{border:2px dashed #333;margin:0}}

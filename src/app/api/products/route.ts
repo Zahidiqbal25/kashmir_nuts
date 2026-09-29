@@ -33,7 +33,8 @@ export async function POST(req: NextRequest) {
       return jsonError('name, category, price, originalPrice, weight are required')
 
     const qty = Number(quantity) || 0
-    const insertData: any = { name, category, price: Number(price), originalPrice: Number(originalPrice), weight, image: image || '', images: images || [], description: description || '', rating: Number(rating) || 4.5, inStock: qty > 0 ? true : inStock !== false, quantity: qty }
+    const galleryImages = Array.isArray(images) ? images : []
+    const insertData: any = { name, category, price: Number(price), originalPrice: Number(originalPrice), weight, image: image || galleryImages[0] || '', images: galleryImages, description: description || '', rating: Number(rating) || 4.5, inStock: qty > 0 ? true : inStock !== false, quantity: qty }
 
     const { data: product, error } = await supabase.from('products')
       .insert(insertData)

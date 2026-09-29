@@ -8,6 +8,17 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File
     if (!file) return jsonError('No file provided')
 
+    // Product images are rendered directly by the storefront, so create the
+    // bucket on first upload and keep its files publicly readable.
+    const { data: bucket, error: bucketLookupError } = await supabase.storage.getBucket('products')
+    if (bucketLookupError && !bucket) {
+      const { error: createBucketError } = await supabase.storage.createBucket('products', { public: true })
+      if (createBucketError) throw new Error(`Unable to create product image storage: ${createBucketError.message}`)
+    } else if (bucket && !bucket.public) {
+      const { error: bucketUpdateError } = await supabase.storage.updateBucket('products', { public: true })
+      if (bucketUpdateError) throw new Error(`Unable to configure product image storage: ${bucketUpdateError.message}`)
+    }
+
     const ext = file.name.split('.').pop()
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
